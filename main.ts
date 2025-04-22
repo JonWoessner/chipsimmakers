@@ -4,6 +4,7 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
 })
 //  i increase, d decrease, names please is init
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
+    let loc: number;
     
     //  ##### adding the players to lists
     if (name == "name") {
@@ -42,13 +43,21 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     }
     
     //  indicate more demand needed
-    // ###suppliers
+    //  ###suppliers
     if (name == "supplier") {
+        loc = find(supplylist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
+        if (loc != -1) {
+            supplylist[loc][1] -= 1
+        }
         
     }
     
-    // # decrement a supplier total and send to maker
+    //  # decrement a supplier total and send to maker
     if (name == "maker") {
+        loc = find(manufactlist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
+        if (loc != -1) {
+            manufactlist[loc][1] -= 1
+        }
         
     }
     
@@ -58,10 +67,10 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
 })
 let inventory = 0
-let manufactlist : number[][] = []
-let supplylist : number[][] = []
 //  ############
 let slow = false
+let supplylist : number[][] = []
+let manufactlist : number[][] = []
 supplylist = [[0, 0]]
 manufactlist = [[0, 0]]
 let consumelist = [[0, 0]]
@@ -74,6 +83,17 @@ let _type = "distributor"
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
 radio.sendString(_type)
+// ## finds the index of a serial number
+function find(arr: number[][], serial: number): number {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i][0] == serial) {
+            return i
+        }
+        
+    }
+    return -1
+}
+
 basic.forever(function on_forever() {
     if (input.buttonIsPressed(Button.A)) {
         basic.showIcon(IconNames.Ghost)
@@ -84,9 +104,5 @@ basic.forever(function on_forever() {
     }
     
     basic.showNumber(7)
+    find(supplylist, 876)
 })
-function find(arr: any, name: any) {
-    // for i in range(len(arr)):
-    
-}
-

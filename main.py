@@ -34,23 +34,26 @@ def on_received_value(name, value):
             pass
     # indicate more demand needed
 
-    ####suppliers
-    if name == 'supplier':
-        pass  ## decrement a supplier total and send to maker
-        
-
-    if name == 'maker':
-        pass
+    # ###suppliers
+    if name == "supplier":
+        loc = find(supplylist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
+        if loc != -1:
+            supplylist[loc][1] -= 1
+    # # decrement a supplier total and send to maker
+    if name == "maker":
+        loc = find(manufactlist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
+        if loc != -1:
+            manufactlist[loc][1] -= 1
 
     if name.includes(convert_to_text(control.device_serial_number())):
         basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))
 radio.on_received_value(on_received_value)
 
 inventory = 0
-manufactlist: List[List[number]] = []
-supplylist: List[List[number]] = []
 # ############
 slow = False
+supplylist: List[List[number]] = []
+manufactlist: List[List[number]] = []
 supplylist = [[0, 0]]
 manufactlist = [[0, 0]]
 consumelist = [[0, 0]]
@@ -64,6 +67,14 @@ radio.set_group(1)
 radio.set_transmit_serial_number(True)
 radio.send_string(_type)
 
+
+### finds the index of a serial number
+def find(arr: List[List[number]] , serial: int):
+    for i in range(len(arr)):
+        if arr[i][0] == serial:
+            return i
+    return -1
+
 def on_forever():
     if input.button_is_pressed(Button.A):
         basic.show_icon(IconNames.GHOST)
@@ -72,9 +83,5 @@ def on_forever():
         basic.show_icon(IconNames.YES)
         basic.pause(1000)
     basic.show_number(7)
+    find(supplylist, 876)
 basic.forever(on_forever)
-
-
-def find(arr, name):
-    #for i in range(len(arr)):
-        pass
