@@ -5,13 +5,27 @@ input.on_button_pressed(Button.A, on_button_pressed_a)
 # i increase, d decrease, names please is init
 
 def on_received_value(name, value):
-    if name == "consumer":
-        pass
-        #add to consumer list
+    global supplylist, manufactlist, consumelist
+    if name == "name":
+        if value == 1: #suppliers
+            supplylist.push({'name':radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 'total': 1})
+            radio.send_value(""+(supplylist[-1]['names'])+"I", supplylist[-1]['total'])
+            #add list
+        if value == 2:  #manufacturers
+            pass
+        if value == 3:  #consumers
+            pass
+
     if name.includes(convert_to_text(control.device_serial_number())):
         basic.show_string("" + str((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))))
 radio.on_received_value(on_received_value)
 
+supplylist = [{}]
+manufactlist = [{}]
+consumelist = [{}]
+supplylist.pop()
+manufactlist.pop()
+consumelist.pop()
 slow = False
 _type = "distributor"
 radio.set_group(1)
