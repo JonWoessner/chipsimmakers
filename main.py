@@ -6,47 +6,59 @@ input.on_button_pressed(Button.A, on_button_pressed_a)
 # i increase, d decrease, names please is init
 
 def on_received_value(name, value):
-    global supplylist, manufactlist, consumelist, inventory
-
-    ###### adding the players to lists
+    global inventory
+    # ##### adding the players to lists
     if name == "name":
-        if value == 1: #suppliers
-            supplylist.push((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1))
-            radio.send_value(supplylist[-1][0]+'I',supplylist[-1][1])
-            #add list
-        if value == 2:  #manufacturers
-            manufactlist.push((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1))
-            radio.send_value(manufactlist[-1][0]+'I',manufactlist[-1][1])
-        if value == 3:  #consumers
-            manufactlist.push((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4))
-            radio.send_value(manufactlist[-1][0]+'I',manufactlist[-1][1])
-    ##### End player init
-
-    #if consumer demands
+        if value == 1:
+            # suppliers
+            supplylist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
+            radio.send_value("" + str(supplylist[-1][0]) + "I", supplylist[-1][1])
+        # add list
+        if value == 2:
+            # manufacturers
+            manufactlist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
+            radio.send_value("" + str(manufactlist[-1][0]) + "I", manufactlist[-1][1])
+        if value == 3:
+            # consumers
+            manufactlist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4])
+            radio.send_value("" + str(manufactlist[-1][0]) + "I", manufactlist[-1][1])
+    # #### End player init
+    # if consumer demands
     if name == "consumer":
+        # # how do I update the value in the consumelist??????
         if inventory > 0:
-            inventory -= value 
-            radio.send_value(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)+'D', value)
-            ## how do I update the value in the consumelist??????
+            inventory += 0 - value
+            radio.send_value("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) + "D",
+                value)
         else:
             pass
-            #indicate more demand needed
+    # indicate more demand needed
+
+    ####suppliers
+    if name == 'supplier':
+        pass  ## decrement a supplier total and send to maker
+        
+
+    if name == 'maker':
+        pass
 
     if name.includes(convert_to_text(control.device_serial_number())):
-        basic.show_string("" + str((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))))
+        basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))
 radio.on_received_value(on_received_value)
 
-supplylist = [(0,0)]
-manufactlist = [(0,0)]
-consumelist = [(0,0)]
+inventory = 0
+manufactlist: List[List[number]] = []
+supplylist: List[List[number]] = []
+# ############
+slow = False
+supplylist = [[0, 0]]
+manufactlist = [[0, 0]]
+consumelist = [[0, 0]]
 supplylist.pop()
 manufactlist.pop()
 consumelist.pop()
-
-### Starting inventory number
+# ## Starting inventory number
 inventory = 32
-#############
-slow = False
 _type = "distributor"
 radio.set_group(1)
 radio.set_transmit_serial_number(True)
@@ -61,3 +73,8 @@ def on_forever():
         basic.pause(1000)
     basic.show_number(7)
 basic.forever(on_forever)
+
+
+def find(arr, name):
+    #for i in range(len(arr)):
+        pass

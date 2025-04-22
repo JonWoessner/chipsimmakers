@@ -5,58 +5,71 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
 //  i increase, d decrease, names please is init
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
-    // ##### adding the players to lists
+    //  ##### adding the players to lists
     if (name == "name") {
         if (value == 1) {
-            // suppliers
+            //  suppliers
             supplylist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
-            radio.sendValue(supplylist[-1][0] + "I", supplylist[-1][1])
+            radio.sendValue("" + ("" + supplylist[-1][0]) + "I", supplylist[-1][1])
         }
         
-        // add list
+        //  add list
         if (value == 2) {
-            // manufacturers
+            //  manufacturers
             manufactlist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
-            radio.sendValue(manufactlist[-1][0] + "I", manufactlist[-1][1])
+            radio.sendValue("" + ("" + manufactlist[-1][0]) + "I", manufactlist[-1][1])
         }
         
         if (value == 3) {
-            // consumers
+            //  consumers
             manufactlist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 4])
-            radio.sendValue(manufactlist[-1][0] + "I", manufactlist[-1][1])
+            radio.sendValue("" + ("" + manufactlist[-1][0]) + "I", manufactlist[-1][1])
         }
         
     }
     
-    // #### End player init
-    // if consumer demands
+    //  #### End player init
+    //  if consumer demands
     if (name == "consumer") {
+        //  # how do I update the value in the consumelist??????
         if (inventory > 0) {
-            inventory -= value
-            radio.sendValue(radio.receivedPacket(RadioPacketProperty.SerialNumber) + "D", value)
+            inventory += 0 - value
+            radio.sendValue("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)) + "D", value)
         } else {
-            // # how do I update the value in the consumelist??????
             
         }
         
     }
     
-    // indicate more demand needed
+    //  indicate more demand needed
+    // ###suppliers
+    if (name == "supplier") {
+        
+    }
+    
+    // # decrement a supplier total and send to maker
+    if (name == "maker") {
+        
+    }
+    
     if (name.includes(convertToText(control.deviceSerialNumber()))) {
         basic.showString("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)))
     }
     
 })
-let supplylist = [[0, 0]]
-let manufactlist = [[0, 0]]
+let inventory = 0
+let manufactlist : number[][] = []
+let supplylist : number[][] = []
+//  ############
+let slow = false
+supplylist = [[0, 0]]
+manufactlist = [[0, 0]]
 let consumelist = [[0, 0]]
 _py.py_array_pop(supplylist)
 _py.py_array_pop(manufactlist)
 _py.py_array_pop(consumelist)
-// ## Starting inventory number
-let inventory = 32
-// ############
-let slow = false
+//  ## Starting inventory number
+inventory = 32
 let _type = "distributor"
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
@@ -72,3 +85,8 @@ basic.forever(function on_forever() {
     
     basic.showNumber(7)
 })
+function find(arr: any, name: any) {
+    // for i in range(len(arr)):
+    
+}
+
