@@ -1,12 +1,12 @@
 def on_received_value(name, value):
-    global demand, slow, disp
+    global demand, disp, slow
     if name.includes(convert_to_text(control.device_serial_number())):
         if "this".char_at(-1) == "I":
             demand += value
-            disp = 'needed'
+            disp = "needed"
         if "this".char_at(-1) == "D":
-            demand -= value
-            disp = 'success'
+            demand += 0 - value
+            disp = "success"
         if "this".char_at(-1) == "S":
             if slow:
                 slow = False
@@ -15,6 +15,7 @@ def on_received_value(name, value):
 radio.on_received_value(on_received_value)
 
 slow = False
+disp = ""
 disp = "needed"
 _type = "consumer"
 slow = False
@@ -24,27 +25,24 @@ radio.set_transmit_serial_number(True)
 radio.send_string(_type)
 
 def on_forever():
-    global demand
     global disp
     if input.button_is_pressed(Button.A):
         if demand > 0:
-            #if slow:
-             #   basic.show_icon(IconNames.GHOST)
-              #  basic.pause(randint(3000, 8000))
-            #set flag
-            disp = 'try'
-            #send radio request
+            # if slow:
+            # basic.show_icon(IconNames.GHOST)
+            # basic.pause(randint(3000, 8000))
+            # set flag
+            disp = "try"
+            # send radio request
             radio.send_value(_type, 1)
-    
-    #display update section
-    if disp =='try':
+    # display update section
+    if disp == "try":
         basic.show_icon(IconNames.TARGET)
-        disp = 'needed'
-    if disp == 'success':
+        disp = "needed"
+    if disp == "success":
         basic.show_icon(IconNames.YES)
-        disp = 'needed'
-    if disp == 'needed':
+        disp = "needed"
+    if disp == "needed":
         basic.show_number(demand)
-    disp = ''
-
+    disp = ""
 basic.forever(on_forever)

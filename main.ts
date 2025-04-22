@@ -7,7 +7,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         }
         
         if ("this".charAt(-1) == "D") {
-            demand -= value
+            demand += 0 - value
             disp = "success"
         }
         
@@ -24,7 +24,8 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
 })
 let slow = false
-let disp = "needed"
+let disp = ""
+disp = "needed"
 let _type = "consumer"
 slow = false
 let demand = 3
@@ -33,21 +34,20 @@ radio.setTransmitSerialNumber(true)
 radio.sendString(_type)
 basic.forever(function on_forever() {
     
-    
     if (input.buttonIsPressed(Button.A)) {
         if (demand > 0) {
-            // if slow:
-            //    basic.show_icon(IconNames.GHOST)
-            //   basic.pause(randint(3000, 8000))
-            // set flag
+            //  if slow:
+            //  basic.show_icon(IconNames.GHOST)
+            //  basic.pause(randint(3000, 8000))
+            //  set flag
             disp = "try"
-            // send radio request
+            //  send radio request
             radio.sendValue(_type, 1)
         }
         
     }
     
-    // display update section
+    //  display update section
     if (disp == "try") {
         basic.showIcon(IconNames.Target)
         disp = "needed"
