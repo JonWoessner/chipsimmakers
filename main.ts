@@ -1,5 +1,6 @@
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
     radio.sendValue("names please", 0)
+    basic.showIcon(IconNames.Heart)
 })
 //  i increase, d decrease, names please is init
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
@@ -29,6 +30,18 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
     // #### End player init
     // if consumer demands
+    if (name == "consumer") {
+        if (inventory > 0) {
+            inventory -= value
+            radio.sendValue(radio.receivedPacket(RadioPacketProperty.SerialNumber) + "D", value)
+        } else {
+            // # how do I update the value in the consumelist??????
+            
+        }
+        
+    }
+    
+    // indicate more demand needed
     if (name.includes(convertToText(control.deviceSerialNumber()))) {
         basic.showString("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)))
     }

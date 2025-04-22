@@ -1,5 +1,6 @@
 def on_button_pressed_a():
     radio.send_value("names please", 0)
+    basic.show_icon(IconNames.HEART)
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 # i increase, d decrease, names please is init
@@ -22,6 +23,14 @@ def on_received_value(name, value):
     ##### End player init
 
     #if consumer demands
+    if name == "consumer":
+        if inventory > 0:
+            inventory -= value 
+            radio.send_value(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)+'D', value)
+            ## how do I update the value in the consumelist??????
+        else:
+            pass
+            #indicate more demand needed
 
     if name.includes(convert_to_text(control.device_serial_number())):
         basic.show_string("" + str((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))))
