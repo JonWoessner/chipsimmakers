@@ -6,26 +6,36 @@ input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_received_value(name, value):
     global supplylist, manufactlist, consumelist
+
+    ###### adding the players to lists
     if name == "name":
         if value == 1: #suppliers
-            supplylist.push({'name':radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 'total': 1})
-            radio.send_value(""+(supplylist[-1]['names'])+"I", supplylist[-1]['total'])
+            supplylist.push((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1))
+            radio.send_value(supplylist[-1][0]+'I',supplylist[-1][1])
             #add list
         if value == 2:  #manufacturers
-            pass
+            manufactlist.push((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1))
+            radio.send_value(manufactlist[-1][0]+'I',manufactlist[-1][1])
         if value == 3:  #consumers
-            pass
+            manufactlist.push((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4))
+            radio.send_value(manufactlist[-1][0]+'I',manufactlist[-1][1])
+
+        
 
     if name.includes(convert_to_text(control.device_serial_number())):
         basic.show_string("" + str((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))))
 radio.on_received_value(on_received_value)
 
-supplylist = [{}]
-manufactlist = [{}]
-consumelist = [{}]
+supplylist = [(0,0)]
+manufactlist = [(0,0)]
+consumelist = [(0,0)]
 supplylist.pop()
 manufactlist.pop()
 consumelist.pop()
+
+### Starting inventory number
+inventory = 32
+#############
 slow = False
 _type = "distributor"
 radio.set_group(1)
