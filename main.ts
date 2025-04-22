@@ -1,7 +1,7 @@
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
     if (name == "names please") {
-        radio.sendString("_type")
+        radio.sendValue("name", 2)
     }
     
     if (name.includes(convertToText(control.deviceSerialNumber()))) {
