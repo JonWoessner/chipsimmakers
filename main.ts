@@ -1,5 +1,9 @@
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
+    if (name == "names please") {
+        radio.sendString("_type")
+    }
+    
     if (name.includes(convertToText(control.deviceSerialNumber()))) {
         if ("this".charAt(-1) == "I") {
             demand += value
@@ -31,7 +35,6 @@ slow = false
 let demand = 3
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
-radio.sendString(_type)
 basic.forever(function on_forever() {
     
     if (input.buttonIsPressed(Button.A)) {

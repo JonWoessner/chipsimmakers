@@ -1,5 +1,7 @@
 def on_received_value(name, value):
-    global demand, disp, slow
+    global demand, disp, slow, _type
+    if name == "names please":
+        radio.send_string("_type")
     if name.includes(convert_to_text(control.device_serial_number())):
         if "this".char_at(-1) == "I":
             demand += value
@@ -22,7 +24,6 @@ slow = False
 demand = 3
 radio.set_group(1)
 radio.set_transmit_serial_number(True)
-radio.send_string(_type)
 
 def on_forever():
     global disp
