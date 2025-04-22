@@ -1,36 +1,31 @@
-radio.onReceivedValue(function (name, value) {
-    if (name.includes(convertToText(control.deviceSerialNumber()))) {
-        if ("this".charAt(-1) == "A") {
-            demand += value
-        }
-        if ("this".charAt(-1) == "S") {
-            if (slow) {
-                slow = false
-            } else {
-                slow = true
-            }
-        }
+input.onButtonPressed(Button.A, function on_button_pressed_a() {
+    radio.sendValue("names please", 0)
+})
+//  i increase, d decrease, names please is init
+radio.onReceivedValue(function on_received_value(name: string, value: number) {
+    if (name == "consumer") {
+        
     }
+    
+    // add to consumer list
+    if (name.includes(convertToText(control.deviceSerialNumber()))) {
+        basic.showString("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)))
+    }
+    
 })
 let slow = false
-let _type = "maker"
-slow = false
-let demand = 1
+let _type = "distributor"
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
 radio.sendString(_type)
-basic.forever(function () {
+basic.forever(function on_forever() {
     if (input.buttonIsPressed(Button.A)) {
-        if (demand > 0) {
-            if (slow) {
-                basic.showIcon(IconNames.Ghost)
-                basic.pause(randint(3000, 8000))
-            }
-            demand += -1
-            radio.sendValue(_type, 1)
-            basic.showIcon(IconNames.Yes)
-            basic.pause(1000)
-        }
+        basic.showIcon(IconNames.Ghost)
+        basic.pause(randint(3000, 8000))
+        radio.sendValue(_type, 1)
+        basic.showIcon(IconNames.Yes)
+        basic.pause(1000)
     }
-    basic.showNumber(demand)
+    
+    basic.showNumber(7)
 })
