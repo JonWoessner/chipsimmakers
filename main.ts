@@ -1,36 +1,66 @@
-radio.onReceivedValue(function (name, value) {
+radio.onReceivedValue(function on_received_value(name: string, value: number) {
+    
     if (name.includes(convertToText(control.deviceSerialNumber()))) {
-        if ("this".charAt(-1) == "A") {
+        if ("this".charAt(-1) == "I") {
             demand += value
+            disp = "needed"
         }
+        
+        if ("this".charAt(-1) == "D") {
+            demand -= value
+            disp = "success"
+        }
+        
         if ("this".charAt(-1) == "S") {
             if (slow) {
                 slow = false
             } else {
                 slow = true
             }
+            
         }
+        
     }
+    
 })
 let slow = false
-let _type = "maker"
+let disp = "needed"
+let _type = "consumer"
 slow = false
-let demand = 1
+let demand = 3
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
 radio.sendString(_type)
-basic.forever(function () {
+basic.forever(function on_forever() {
+    
+    
     if (input.buttonIsPressed(Button.A)) {
         if (demand > 0) {
-            if (slow) {
-                basic.showIcon(IconNames.Ghost)
-                basic.pause(randint(3000, 8000))
-            }
-            demand += -1
+            // if slow:
+            //    basic.show_icon(IconNames.GHOST)
+            //   basic.pause(randint(3000, 8000))
+            // set flag
+            disp = "try"
+            // send radio request
             radio.sendValue(_type, 1)
-            basic.showIcon(IconNames.Yes)
-            basic.pause(1000)
         }
+        
     }
-    basic.showNumber(demand)
+    
+    // display update section
+    if (disp == "try") {
+        basic.showIcon(IconNames.Target)
+        disp = "needed"
+    }
+    
+    if (disp == "success") {
+        basic.showIcon(IconNames.Yes)
+        disp = "needed"
+    }
+    
+    if (disp == "needed") {
+        basic.showNumber(demand)
+    }
+    
+    disp = ""
 })
