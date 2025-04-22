@@ -5,7 +5,7 @@ input.on_button_pressed(Button.A, on_button_pressed_a)
 # i increase, d decrease, names please is init
 
 def on_received_value(name, value):
-    global supplylist, manufactlist, consumelist
+    global supplylist, manufactlist, consumelist, inventory
 
     ###### adding the players to lists
     if name == "name":
@@ -19,8 +19,9 @@ def on_received_value(name, value):
         if value == 3:  #consumers
             manufactlist.push((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4))
             radio.send_value(manufactlist[-1][0]+'I',manufactlist[-1][1])
+    ##### End player init
 
-        
+    #if consumer demands
 
     if name.includes(convert_to_text(control.device_serial_number())):
         basic.show_string("" + str((radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))))

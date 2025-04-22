@@ -27,6 +27,8 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         
     }
     
+    // #### End player init
+    // if consumer demands
     if (name.includes(convertToText(control.deviceSerialNumber()))) {
         basic.showString("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)))
     }
