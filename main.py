@@ -13,6 +13,7 @@ input.on_button_pressed(Button.B, on_button_pressed_b)
 # i increase, d decrease, names please is init
 
 def on_button_pressed_ab():
+    basic.show_number(inventory)
     started = True
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
@@ -37,32 +38,32 @@ def on_received_value(name, value):
             consumelist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4])
             radio.send_value("" + str(consumelist[-1][0]) + "I", consumelist[-1][1])
     # #### End player init
+    if started:
+        # if consumer demands
+        if name == "consumer":
+            if inventory > 0:  
+                inventory += 0 - value  #update inventory, then tell that consumer that they were successful 
+                radio.send_value("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) + "D", value)
+                loc = find(consumelist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) #find consumer in list
+                if loc != -1:  #catch any errors 
+                    consumelist[loc][1] -= 1
+            else:
+                demand = True
+        # indicate more demand needed
 
-    # if consumer demands
-    if name == "consumer":
-        if inventory > 0:  
-            inventory += 0 - value  #update inventory, then tell that consumer that they were successful 
-            radio.send_value("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) + "D", value)
-            loc = find(consumelist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) #find consumer in list
-            if loc != -1:  #catch any errors 
-                consumelist[loc][1] -= 1
-        else:
-            demand = True
-    # indicate more demand needed
-
-    # ###suppliers
-    if name == "supplier":
-        loc = find(supplylist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
-        if loc != -1:
-            supplylist[loc][1] -= 1
-        # # decrement a supplier total and send to maker
-        radio.send_value(choose(manufactlist, count[1], current[1]), 1)
-    if name == "maker":
-        loc = find(manufactlist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
-        if loc != -1:
-            manufactlist[loc][1] -= 1
-        inventory += 5  #increase inventory for distributors
-'''
+        # ###suppliers
+        if name == "supplier":
+            loc = find(supplylist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
+            if loc != -1:
+                supplylist[loc][1] -= 1
+            # # decrement a supplier total and send to maker
+            radio.send_value(choose(manufactlist, count[1], current[1]), 1)
+        if name == "maker":
+            loc = find(manufactlist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
+            if loc != -1:
+                manufactlist[loc][1] -= 1
+            inventory += 5  #increase inventory for distributors
+    '''
     if name.includes(convert_to_text(control.device_serial_number())):
         basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))'''
 radio.on_received_value(on_received_value)
@@ -125,3 +126,9 @@ def on_forever():
             radio.send_value(choose(supplylist, count[0], current[0])+'I', 1)
 
 basic.forever(on_forever)
+
+def onIn_background():
+    while True:
+        basic.show_number(inventory)
+        basic.pause(100)
+control.in_background(onIn_background)

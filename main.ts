@@ -13,13 +13,9 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
 })
 //  i increase, d decrease, names please is init
 input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
+    basic.showNumber(inventory)
     let started = true
 })
-// increase inventory for distributors
-/** 
-    if name.includes(convert_to_text(control.device_serial_number())):
-        basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))
- */
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     let loc: number;
     
@@ -50,46 +46,54 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     }
     
     //  #### End player init
-    //  if consumer demands
-    if (name == "consumer") {
-        if (inventory > 0) {
-            inventory += 0 - value
-            // update inventory, then tell that consumer that they were successful 
-            radio.sendValue("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)) + "D", value)
-            loc = find(consumelist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
-            // find consumer in list
-            if (loc != -1) {
-                // catch any errors 
-                consumelist[loc][1] -= 1
+    if (started) {
+        //  if consumer demands
+        if (name == "consumer") {
+            if (inventory > 0) {
+                inventory += 0 - value
+                // update inventory, then tell that consumer that they were successful 
+                radio.sendValue("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)) + "D", value)
+                loc = find(consumelist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
+                // find consumer in list
+                if (loc != -1) {
+                    // catch any errors 
+                    consumelist[loc][1] -= 1
+                }
+                
+            } else {
+                demand = true
             }
             
-        } else {
-            demand = true
+        }
+        
+        //  indicate more demand needed
+        //  ###suppliers
+        if (name == "supplier") {
+            loc = find(supplylist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
+            if (loc != -1) {
+                supplylist[loc][1] -= 1
+            }
+            
+            //  # decrement a supplier total and send to maker
+            radio.sendValue(choose(manufactlist, count[1], current[1]), 1)
+        }
+        
+        if (name == "maker") {
+            loc = find(manufactlist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
+            if (loc != -1) {
+                manufactlist[loc][1] -= 1
+            }
+            
+            inventory += 5
         }
         
     }
     
-    //  indicate more demand needed
-    //  ###suppliers
-    if (name == "supplier") {
-        loc = find(supplylist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
-        if (loc != -1) {
-            supplylist[loc][1] -= 1
-        }
-        
-        //  # decrement a supplier total and send to maker
-        radio.sendValue(choose(manufactlist, count[1], current[1]), 1)
-    }
-    
-    if (name == "maker") {
-        loc = find(manufactlist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
-        if (loc != -1) {
-            manufactlist[loc][1] -= 1
-        }
-        
-        inventory += 5
-    }
-    
+    // increase inventory for distributors
+    /** 
+    if name.includes(convert_to_text(control.device_serial_number())):
+        basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))
+ */
 })
 let inventory = 0
 //  ############
@@ -162,4 +166,10 @@ basic.forever(function on_forever() {
         
     }
     
+})
+control.inBackground(function onIn_background() {
+    while (true) {
+        basic.showNumber(inventory)
+        basic.pause(100)
+    }
 })
