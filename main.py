@@ -3,10 +3,17 @@ def on_button_pressed_a():
     basic.show_icon(IconNames.HEART)
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
+def on_button_pressed_b():
+    basic.show_icon(IconNames.SAD)
+    for n in manufactlist:
+        radio.send_value(n[0]+"S", 1)
+    for m in supplylist:
+        radio.send_value(m[0]+"S", 1)
+
 # i increase, d decrease, names please is init
 
 def on_received_value(name, value):
-    global inventory
+    global inventory, demand, manufactlist, supplylist, consumelist, current, count
     # ##### adding the players to lists
     if name == "name":
         if value == 1:
@@ -20,18 +27,20 @@ def on_received_value(name, value):
             radio.send_value("" + str(manufactlist[-1][0]) + "I", manufactlist[-1][1])
         if value == 3:
             # consumers
-            manufactlist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4])
-            radio.send_value("" + str(manufactlist[-1][0]) + "I", manufactlist[-1][1])
+            consumelist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4])
+            radio.send_value("" + str(consumelist[-1][0]) + "I", consumelist[-1][1])
     # #### End player init
+
     # if consumer demands
     if name == "consumer":
-        # # how do I update the value in the consumelist??????
-        if inventory > 0:
-            inventory += 0 - value
-            radio.send_value("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) + "D",
-                value)
+        if inventory > 0:  
+            inventory += 0 - value  #update inventory, then tell that consumer that they were successful 
+            radio.send_value("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) + "D", value)
+            loc = find(consumelist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) #find consumer in list
+            if loc != -1:  #catch any errors 
+                consumelist[loc][1] -= 1
         else:
-            pass
+            demand = True
     # indicate more demand needed
 
     # ###suppliers
@@ -39,19 +48,24 @@ def on_received_value(name, value):
         loc = find(supplylist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
         if loc != -1:
             supplylist[loc][1] -= 1
-    # # decrement a supplier total and send to maker
+        # # decrement a supplier total and send to maker
+        radio.send_value(choose(manufactlist, count[1], current[1]), 1)
     if name == "maker":
         loc = find(manufactlist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
         if loc != -1:
             manufactlist[loc][1] -= 1
-
+        inventory += 5  #increase inventory for distributors
+'''
     if name.includes(convert_to_text(control.device_serial_number())):
-        basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))
+        basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))'''
 radio.on_received_value(on_received_value)
 
 inventory = 0
 # ############
 slow = False
+count = [0,0,0]   ##suppliers, makers, consumers
+current = [0, 0, 0]
+demand = False
 supplylist: List[List[number]] = []
 manufactlist: List[List[number]] = []
 supplylist = [[0, 0]]
@@ -75,13 +89,19 @@ def find(arr: List[List[number]] , serial: int):
             return i
     return -1
 
+def choose(arr: List[List[number]], maxi, curr ):
+    '''
+    given a list of makers/suppliers, choose one that has the fewest current orders.
+    can I also ensure that they rotate nicely??
+    '''
+    curr += 1
+    if curr >= maxi:
+        curr = 0
+    arr[curr][1] += 1
+    return arr[curr][0] + "I"
+
 def on_forever():
-    if input.button_is_pressed(Button.A):
-        basic.show_icon(IconNames.GHOST)
-        basic.pause(randint(3000, 8000))
-        radio.send_value(_type, 1)
-        basic.show_icon(IconNames.YES)
-        basic.pause(1000)
-    basic.show_number(7)
-    find(supplylist, 876)
+    #send out additional demand every 4-9 seconds, random 1-2 each
+    #send out additional supply if flagged and every x seconds
+    pass
 basic.forever(on_forever)

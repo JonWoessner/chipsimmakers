@@ -2,7 +2,22 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
     radio.sendValue("names please", 0)
     basic.showIcon(IconNames.Heart)
 })
+function on_button_pressed_b() {
+    basic.showIcon(IconNames.Sad)
+    for (let n of manufactlist) {
+        radio.sendValue(n[0] + "S", 1)
+    }
+    for (let m of supplylist) {
+        radio.sendValue(m[0] + "S", 1)
+    }
+}
+
 //  i increase, d decrease, names please is init
+// increase inventory for distributors
+/** 
+    if name.includes(convert_to_text(control.device_serial_number())):
+        basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))
+ */
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     let loc: number;
     
@@ -23,8 +38,8 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         
         if (value == 3) {
             //  consumers
-            manufactlist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 4])
-            radio.sendValue("" + ("" + manufactlist[-1][0]) + "I", manufactlist[-1][1])
+            consumelist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 4])
+            radio.sendValue("" + ("" + consumelist[-1][0]) + "I", consumelist[-1][1])
         }
         
     }
@@ -32,12 +47,19 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     //  #### End player init
     //  if consumer demands
     if (name == "consumer") {
-        //  # how do I update the value in the consumelist??????
         if (inventory > 0) {
             inventory += 0 - value
+            // update inventory, then tell that consumer that they were successful 
             radio.sendValue("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)) + "D", value)
-        } else {
+            loc = find(consumelist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
+            // find consumer in list
+            if (loc != -1) {
+                // catch any errors 
+                consumelist[loc][1] -= 1
+            }
             
+        } else {
+            demand = true
         }
         
     }
@@ -50,25 +72,27 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
             supplylist[loc][1] -= 1
         }
         
+        //  # decrement a supplier total and send to maker
+        radio.sendValue(choose(manufactlist, count[1], current[1]), 1)
     }
     
-    //  # decrement a supplier total and send to maker
     if (name == "maker") {
         loc = find(manufactlist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
         if (loc != -1) {
             manufactlist[loc][1] -= 1
         }
         
-    }
-    
-    if (name.includes(convertToText(control.deviceSerialNumber()))) {
-        basic.showString("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)))
+        inventory += 5
     }
     
 })
 let inventory = 0
 //  ############
 let slow = false
+let count = [0, 0, 0]
+// #suppliers, makers, consumers
+let current = [0, 0, 0]
+let demand = false
 let supplylist : number[][] = []
 let manufactlist : number[][] = []
 supplylist = [[0, 0]]
@@ -94,15 +118,23 @@ function find(arr: number[][], serial: number): number {
     return -1
 }
 
-basic.forever(function on_forever() {
-    if (input.buttonIsPressed(Button.A)) {
-        basic.showIcon(IconNames.Ghost)
-        basic.pause(randint(3000, 8000))
-        radio.sendValue(_type, 1)
-        basic.showIcon(IconNames.Yes)
-        basic.pause(1000)
+function choose(arr: number[][], maxi: number, curr: number): string {
+    /** 
+    given a list of makers/suppliers, choose one that has the fewest current orders.
+    can I also ensure that they rotate nicely??
+    
+ */
+    curr += 1
+    if (curr >= maxi) {
+        curr = 0
     }
     
-    basic.showNumber(7)
-    find(supplylist, 876)
+    arr[curr][1] += 1
+    return arr[curr][0] + "I"
+}
+
+basic.forever(function on_forever() {
+    // send out additional demand every 4-9 seconds, random 1-2 each
+    // send out additional supply if flagged and every x seconds
+    
 })
