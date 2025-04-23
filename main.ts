@@ -91,6 +91,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
 let inventory = 0
 //  ############
 let slow = false
+let started = false
 let count = [0, 0, 0]
 // #suppliers, makers, consumers
 let current = [0, 0, 0]
@@ -142,18 +143,21 @@ basic.forever(function on_forever() {
     let val: number;
     let timenow = control.millis()
     
-    // send out additional demand every 4-9 seconds, random 1-2 each
-    if (timenow - dtime > 5000) {
-        for (let x of consumelist) {
-            val = randint(1, 2)
-            radio.sendValue(x[0] + "I", val)
-            x[1] += val
+    if (started) {
+        // send out additional demand every 4-9 seconds, random 1-2 each
+        if (timenow - dtime > 5000) {
+            for (let x of consumelist) {
+                val = randint(1, 2)
+                radio.sendValue(x[0] + "I", val)
+                x[1] += val
+            }
         }
-    }
-    
-    // if inventory drops, ping a supplier to make more stuff.
-    if (inventory < 10 && timenow - stime > 3000) {
-        radio.sendValue(choose(supplylist, count[0], current[0]) + "I", 1)
+        
+        // if inventory drops, ping a supplier to make more stuff.
+        if (inventory < 10 && timenow - stime > 3000) {
+            radio.sendValue(choose(supplylist, count[0], current[0]) + "I", 1)
+        }
+        
     }
     
 })

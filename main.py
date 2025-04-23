@@ -66,6 +66,7 @@ radio.on_received_value(on_received_value)
 inventory = 0
 # ############
 slow = False
+started = False
 count = [0,0,0]   ##suppliers, makers, consumers
 current = [0, 0, 0]
 demand = False
@@ -108,16 +109,16 @@ def choose(arr: List[List[number]], maxi, curr ):
 
 def on_forever():
     timenow = control.millis()
-    global stime, dtime, consumelist
-
-    #send out additional demand every 4-9 seconds, random 1-2 each
-    if timenow - dtime > 5000:
-        for x in consumelist:
-            val = randint(1,2)
-            radio.send_value(x[0]+'I', val)
-            x[1] += val
-    #if inventory drops, ping a supplier to make more stuff.
-    if inventory < 10 and ((timenow - stime) > 3000):
-        radio.send_value(choose(supplylist, count[0], current[0])+'I', 1)
+    global stime, dtime, consumelist, started
+    if started:
+        #send out additional demand every 4-9 seconds, random 1-2 each
+        if timenow - dtime > 5000:
+            for x in consumelist:
+                val = randint(1,2)
+                radio.send_value(x[0]+'I', val)
+                x[1] += val
+        #if inventory drops, ping a supplier to make more stuff.
+        if inventory < 10 and ((timenow - stime) > 3000):
+            radio.send_value(choose(supplylist, count[0], current[0])+'I', 1)
 
 basic.forever(on_forever)
