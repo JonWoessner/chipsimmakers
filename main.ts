@@ -33,7 +33,7 @@ let disp = ""
 disp = "needed"
 let _type = "consumer"
 slow = false
-let demand = 3
+let demand = 0
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
 basic.forever(function on_forever() {

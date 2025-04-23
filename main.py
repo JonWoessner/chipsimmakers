@@ -22,7 +22,7 @@ disp = ""
 disp = "needed"
 _type = "consumer"
 slow = False
-demand = 3
+demand = 0
 radio.set_group(1)
 radio.set_transmit_serial_number(True)
 
