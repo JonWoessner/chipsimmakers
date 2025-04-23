@@ -12,6 +12,9 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
     }
 })
 //  i increase, d decrease, names please is init
+input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
+    let started = true
+})
 // increase inventory for distributors
 /** 
     if name.includes(convert_to_text(control.device_serial_number())):
@@ -112,7 +115,6 @@ let stime = control.millis()
 let _type = "distributor"
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
-radio.sendString(_type)
 // ## finds the index of a serial number
 function find(arr: number[][], serial: number): number {
     for (let i = 0; i < arr.length; i++) {

@@ -12,6 +12,10 @@ def on_button_pressed_b():
 input.on_button_pressed(Button.B, on_button_pressed_b)
 # i increase, d decrease, names please is init
 
+def on_button_pressed_ab():
+    started = True
+input.on_button_pressed(Button.AB, on_button_pressed_ab)
+
 def on_received_value(name, value):
     global inventory, demand, manufactlist, supplylist, consumelist, current, count
     # ##### adding the players to lists
@@ -86,7 +90,6 @@ stime = control.millis()
 _type = "distributor"
 radio.set_group(1)
 radio.set_transmit_serial_number(True)
-radio.send_string(_type)
 
 
 ### finds the index of a serial number
