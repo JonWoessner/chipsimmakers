@@ -2,7 +2,7 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
     radio.sendValue("names please", 0)
     basic.showIcon(IconNames.Heart)
 })
-function on_button_pressed_b() {
+input.onButtonPressed(Button.B, function on_button_pressed_b() {
     basic.showIcon(IconNames.Sad)
     for (let n of manufactlist) {
         radio.sendValue(n[0] + "S", 1)
@@ -10,8 +10,7 @@ function on_button_pressed_b() {
     for (let m of supplylist) {
         radio.sendValue(m[0] + "S", 1)
     }
-}
-
+})
 //  i increase, d decrease, names please is init
 // increase inventory for distributors
 /** 
@@ -25,6 +24,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     if (name == "name") {
         if (value == 1) {
             //  suppliers
+            count[0] += 1
             supplylist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
             radio.sendValue("" + ("" + supplylist[-1][0]) + "I", supplylist[-1][1])
         }
@@ -32,12 +32,14 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         //  add list
         if (value == 2) {
             //  manufacturers
+            count[1] += 1
             manufactlist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
             radio.sendValue("" + ("" + manufactlist[-1][0]) + "I", manufactlist[-1][1])
         }
         
         if (value == 3) {
             //  consumers
+            count[2] += 1
             consumelist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 4])
             radio.sendValue("" + ("" + consumelist[-1][0]) + "I", consumelist[-1][1])
         }
@@ -95,9 +97,10 @@ let current = [0, 0, 0]
 let demand = false
 let supplylist : number[][] = []
 let manufactlist : number[][] = []
+let consumelist : number[][] = []
 supplylist = [[0, 0]]
 manufactlist = [[0, 0]]
-let consumelist = [[0, 0]]
+consumelist = [[0, 0]]
 _py.py_array_pop(supplylist)
 _py.py_array_pop(manufactlist)
 _py.py_array_pop(consumelist)
@@ -136,12 +139,15 @@ function choose(arr: number[][], maxi: number, curr: number): string {
 }
 
 basic.forever(function on_forever() {
+    let val: number;
     let timenow = control.millis()
     
     // send out additional demand every 4-9 seconds, random 1-2 each
     if (timenow - dtime > 5000) {
         for (let x of consumelist) {
-            radio.sendValue
+            val = randint(1, 2)
+            radio.sendValue(x[0] + "I", val)
+            x[1] += val
         }
     }
     
@@ -149,6 +155,5 @@ basic.forever(function on_forever() {
     if (inventory < 10 && timenow - stime > 3000) {
         radio.sendValue(choose(supplylist, count[0], current[0]) + "I", 1)
     }
-    
     
 })

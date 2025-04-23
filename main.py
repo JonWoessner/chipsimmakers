@@ -9,7 +9,7 @@ def on_button_pressed_b():
         radio.send_value(n[0]+"S", 1)
     for m in supplylist:
         radio.send_value(m[0]+"S", 1)
-
+input.on_button_pressed(Button.B, on_button_pressed_b)
 # i increase, d decrease, names please is init
 
 def on_received_value(name, value):
@@ -18,15 +18,18 @@ def on_received_value(name, value):
     if name == "name":
         if value == 1:
             # suppliers
+            count[0] += 1
             supplylist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
             radio.send_value("" + str(supplylist[-1][0]) + "I", supplylist[-1][1])
         # add list
         if value == 2:
             # manufacturers
+            count[1] += 1
             manufactlist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
             radio.send_value("" + str(manufactlist[-1][0]) + "I", manufactlist[-1][1])
         if value == 3:
             # consumers
+            count[2] += 1
             consumelist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4])
             radio.send_value("" + str(consumelist[-1][0]) + "I", consumelist[-1][1])
     # #### End player init
@@ -111,9 +114,10 @@ def on_forever():
     if timenow - dtime > 5000:
         for x in consumelist:
             val = randint(1,2)
-            radio.send_value(x[0], val)
+            radio.send_value(x[0]+'I', val)
+            x[1] += val
     #if inventory drops, ping a supplier to make more stuff.
     if inventory < 10 and ((timenow - stime) > 3000):
         radio.send_value(choose(supplylist, count[0], current[0])+'I', 1)
-    pass
+
 basic.forever(on_forever)
