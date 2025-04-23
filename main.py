@@ -1,7 +1,7 @@
 def on_received_value(name, value):
     global demand, slow, _type
     if name == "names please":
-        radio.send_value("name", 2)
+        radio.send_value("name", 1)
     if name.includes(convert_to_text(control.device_serial_number())):
         if "this".char_at(-1) == "I":
             demand += value
@@ -13,7 +13,7 @@ def on_received_value(name, value):
 radio.on_received_value(on_received_value)
 
 slow = False
-_type = "maker"
+_type = "supplier"
 slow = False
 demand = 1
 radio.set_group(1)

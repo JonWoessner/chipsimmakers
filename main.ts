@@ -1,7 +1,7 @@
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
     if (name == "names please") {
-        radio.sendValue("name", 2)
+        radio.sendValue("name", 1)
     }
     
     if (name.includes(convertToText(control.deviceSerialNumber()))) {
@@ -22,7 +22,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
 })
 let slow = false
-let _type = "maker"
+let _type = "supplier"
 slow = false
 let demand = 1
 radio.setGroup(1)
