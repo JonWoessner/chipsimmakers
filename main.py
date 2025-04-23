@@ -1,6 +1,7 @@
 def on_received_value(name, value):
     global demand, disp, slow, _type
     if name == "names please":
+        basic.pause(randint(100, 3000))
         radio.send_value("name", 3)
     if name.includes(convert_to_text(control.device_serial_number())):
         if "this".char_at(-1) == "I":

@@ -1,6 +1,7 @@
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
     if (name == "names please") {
+        basic.pause(randint(100, 3000))
         radio.sendValue("name", 3)
     }
     
