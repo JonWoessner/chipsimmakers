@@ -103,6 +103,8 @@ _py.py_array_pop(manufactlist)
 _py.py_array_pop(consumelist)
 //  ## Starting inventory number
 inventory = 32
+let dtime = control.millis()
+let stime = control.millis()
 let _type = "distributor"
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
@@ -134,7 +136,19 @@ function choose(arr: number[][], maxi: number, curr: number): string {
 }
 
 basic.forever(function on_forever() {
+    let timenow = control.millis()
+    
     // send out additional demand every 4-9 seconds, random 1-2 each
-    // send out additional supply if flagged and every x seconds
+    if (timenow - dtime > 5000) {
+        for (let x of consumelist) {
+            radio.sendValue
+        }
+    }
+    
+    // if inventory drops, ping a supplier to make more stuff.
+    if (inventory < 10 && timenow - stime > 3000) {
+        radio.sendValue(choose(supplylist, count[0], current[0]) + "I", 1)
+    }
+    
     
 })

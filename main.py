@@ -68,6 +68,7 @@ current = [0, 0, 0]
 demand = False
 supplylist: List[List[number]] = []
 manufactlist: List[List[number]] = []
+consumelist: List[List[number]] = []
 supplylist = [[0, 0]]
 manufactlist = [[0, 0]]
 consumelist = [[0, 0]]
@@ -76,6 +77,8 @@ manufactlist.pop()
 consumelist.pop()
 # ## Starting inventory number
 inventory = 32
+dtime = control.millis()
+stime = control.millis()
 _type = "distributor"
 radio.set_group(1)
 radio.set_transmit_serial_number(True)
@@ -101,7 +104,16 @@ def choose(arr: List[List[number]], maxi, curr ):
     return arr[curr][0] + "I"
 
 def on_forever():
+    timenow = control.millis()
+    global stime, dtime, consumelist
+
     #send out additional demand every 4-9 seconds, random 1-2 each
-    #send out additional supply if flagged and every x seconds
+    if timenow - dtime > 5000:
+        for x in consumelist:
+            val = randint(1,2)
+            radio.send_value(x[0], val)
+    #if inventory drops, ping a supplier to make more stuff.
+    if inventory < 10 and ((timenow - stime) > 3000):
+        radio.send_value(choose(supplylist, count[0], current[0])+'I', 1)
     pass
 basic.forever(on_forever)
