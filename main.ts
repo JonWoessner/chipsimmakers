@@ -1,46 +1,69 @@
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
-    radio.sendValue("names please", 0)
-    basic.showIcon(IconNames.Heart)
+    radio.sendValue("init", 0)
+    basic.showIcon(IconNames.Diamond)
 })
 input.onButtonPressed(Button.B, function on_button_pressed_b() {
-    basic.showIcon(IconNames.Sad)
-    for (let n of manufactlist) {
-        radio.sendValue(n[0] + "S", 1)
+    let slow: boolean;
+    if (slow == false) {
+        slow = true
+        basic.showIcon(IconNames.Sad)
+        for (let n of manufactlist) {
+            radio.sendValue("S", n[0])
+        }
+        for (let m of supplylist) {
+            radio.sendValue("S", m[0])
+        }
+    } else {
+        slow = false
+        basic.showIcon(IconNames.Happy)
+        for (let o of manufactlist) {
+            radio.sendValue("F", o[0])
+        }
+        for (let p of supplylist) {
+            radio.sendValue("F", p[0])
+        }
     }
-    for (let m of supplylist) {
-        radio.sendValue(m[0] + "S", 1)
-    }
+    
 })
 //  i increase, d decrease, names please is init
 input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
-    basic.showNumber(inventory)
-    let started = true
+    let started: boolean;
+    // #START THE GAME##
+    if (!started) {
+        started = true
+        //  send initial values
+        for (let i of manufactlist) {
+            radio.sendValue("I", i[0])
+        }
+        for (let j of supplylist) {
+            radio.sendValue("I", j[0])
+        }
+        basic.showNumber(inventory)
+    }
+    
 })
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     let loc: number;
     
     //  ##### adding the players to lists
-    if (name == "name") {
+    if (name.includes("name")) {
         if (value == 1) {
             //  suppliers
             count[0] += 1
             supplylist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
-            radio.sendValue("" + ("" + supplylist[-1][0]) + "I", supplylist[-1][1])
         }
         
-        //  add list
+        // #######radio.send_value("I", supplylist[len(supplylist)-1][0]) 
         if (value == 2) {
             //  manufacturers
             count[1] += 1
             manufactlist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
-            radio.sendValue("" + ("" + manufactlist[-1][0]) + "I", manufactlist[-1][1])
         }
         
         if (value == 3) {
             //  consumers
             count[2] += 1
-            consumelist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 4])
-            radio.sendValue("" + ("" + consumelist[-1][0]) + "I", consumelist[-1][1])
+            consumelist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 0])
         }
         
     }
@@ -50,14 +73,14 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         //  if consumer demands
         if (name == "consumer") {
             if (inventory > 0) {
-                inventory += 0 - value
+                inventory -= 1
                 // update inventory, then tell that consumer that they were successful 
-                radio.sendValue("" + ("" + radio.receivedPacket(RadioPacketProperty.SerialNumber)) + "D", value)
+                radio.sendValue("I", radio.receivedPacket(RadioPacketProperty.SerialNumber))
                 loc = find(consumelist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
                 // find consumer in list
                 if (loc != -1) {
                     // catch any errors 
-                    consumelist[loc][1] -= 1
+                    consumelist[loc][1] += 1
                 }
                 
             } else {
@@ -75,10 +98,10 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
             }
             
             //  # decrement a supplier total and send to maker
-            radio.sendValue(choose(manufactlist, count[1], current[1]), 1)
+            radio.sendValue("I", choose(manufactlist, count[1], current[1]))
         }
         
-        if (name == "maker") {
+        if (name == "manufacturer") {
             loc = find(manufactlist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
             if (loc != -1) {
                 manufactlist[loc][1] -= 1
@@ -130,7 +153,7 @@ function find(arr: number[][], serial: number): number {
     return -1
 }
 
-function choose(arr: number[][], maxi: number, curr: number): string {
+function choose(arr: number[][], maxi: number, curr: number): number {
     /** 
     given a list of makers/suppliers, choose one that has the fewest current orders.
     can I also ensure that they rotate nicely??
@@ -142,7 +165,7 @@ function choose(arr: number[][], maxi: number, curr: number): string {
     }
     
     arr[curr][1] += 1
-    return arr[curr][0] + "I"
+    return arr[curr][0]
 }
 
 basic.forever(function on_forever() {

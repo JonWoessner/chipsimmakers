@@ -1,52 +1,66 @@
 def on_button_pressed_a():
-    radio.send_value("names please", 0)
-    basic.show_icon(IconNames.HEART)
+    radio.send_value("init", 0)
+    basic.show_icon(IconNames.DIAMOND)
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_button_pressed_b():
-    basic.show_icon(IconNames.SAD)
-    for n in manufactlist:
-        radio.send_value(n[0]+"S", 1)
-    for m in supplylist:
-        radio.send_value(m[0]+"S", 1)
+    if slow == False:
+        slow = True
+        basic.show_icon(IconNames.SAD)
+        for n in manufactlist:
+            radio.send_value("S", n[0])
+        for m in supplylist:
+            radio.send_value("S", m[0])
+    else:
+        slow = False
+        basic.show_icon(IconNames.HAPPY)
+        for o in manufactlist:
+            radio.send_value("F", o[0])
+        for p in supplylist:
+            radio.send_value("F", p[0])
 input.on_button_pressed(Button.B, on_button_pressed_b)
 # i increase, d decrease, names please is init
 
 def on_button_pressed_ab():
-    basic.show_number(inventory)
-    started = True
+    ##START THE GAME##
+    if not started:
+        started = True
+        # send initial values
+        for i in manufactlist:
+            radio.send_value('I', i[0])
+        for j in supplylist:
+            radio.send_value('I', j[0])
+        basic.show_number(inventory)
+    
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
 def on_received_value(name, value):
     global inventory, demand, manufactlist, supplylist, consumelist, current, count
     # ##### adding the players to lists
-    if name == "name":
+    if name.includes('name'):
         if value == 1:
             # suppliers
             count[0] += 1
             supplylist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
-            radio.send_value("" + str(supplylist[-1][0]) + "I", supplylist[-1][1])
-        # add list
+            ########radio.send_value("I", supplylist[len(supplylist)-1][0]) 
         if value == 2:
             # manufacturers
             count[1] += 1
             manufactlist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
-            radio.send_value("" + str(manufactlist[-1][0]) + "I", manufactlist[-1][1])
         if value == 3:
             # consumers
             count[2] += 1
-            consumelist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 4])
-            radio.send_value("" + str(consumelist[-1][0]) + "I", consumelist[-1][1])
+            consumelist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 0])
     # #### End player init
     if started:
         # if consumer demands
         if name == "consumer":
             if inventory > 0:  
-                inventory += 0 - value  #update inventory, then tell that consumer that they were successful 
-                radio.send_value("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) + "D", value)
+                inventory -= 1  #update inventory, then tell that consumer that they were successful 
+                radio.send_value('I', radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
                 loc = find(consumelist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) #find consumer in list
                 if loc != -1:  #catch any errors 
-                    consumelist[loc][1] -= 1
+                    consumelist[loc][1] += 1
             else:
                 demand = True
         # indicate more demand needed
@@ -57,8 +71,8 @@ def on_received_value(name, value):
             if loc != -1:
                 supplylist[loc][1] -= 1
             # # decrement a supplier total and send to maker
-            radio.send_value(choose(manufactlist, count[1], current[1]), 1)
-        if name == "maker":
+            radio.send_value('I', choose(manufactlist, count[1], current[1]))
+        if name == "manufacturer":
             loc = find(manufactlist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
             if loc != -1:
                 manufactlist[loc][1] -= 1
@@ -93,6 +107,7 @@ radio.set_group(1)
 radio.set_transmit_serial_number(True)
 
 
+
 ### finds the index of a serial number
 def find(arr: List[List[number]] , serial: int):
     for i in range(len(arr)):
@@ -109,7 +124,7 @@ def choose(arr: List[List[number]], maxi, curr ):
     if curr >= maxi:
         curr = 0
     arr[curr][1] += 1
-    return arr[curr][0] + "I"
+    return arr[curr][0]
 
 def on_forever():
     timenow = control.millis()
