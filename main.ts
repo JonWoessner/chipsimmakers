@@ -38,9 +38,9 @@ manufact 4
 
  */
 let slow = false
-let _type = "supplier"
-// # supplier or manufact
-let numtype = 1
+let _type = "manufact"
+// # supplier 1 or manufact 2
+let numtype = 2
 slow = false
 let demand = 0
 let lastdemand = 0
