@@ -1,8 +1,12 @@
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
+    serial.writeLine(name)
+    serial.writeLine("" + value)
+    serial.writeLine("" + control.deviceSerialNumber())
     if (name == "init") {
         basic.pause(randint(100, 3000))
         radio.sendValue("name", 3)
+        basic.showIcon(IconNames.Heart)
     }
     
     if (value == control.deviceSerialNumber()) {

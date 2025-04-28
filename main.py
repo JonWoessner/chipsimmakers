@@ -1,8 +1,12 @@
 def on_received_value(name, value):
     global demand, disp, bought
+    serial.write_line(name)
+    serial.write_line(''+value)
+    serial.write_line(""+control.device_serial_number())
     if name == "init":
         basic.pause(randint(100, 3000))
         radio.send_value("name", 3)
+        basic.show_icon(IconNames.HEART)
     if value == control.device_serial_number():
         if name == 'I':
             bought += 1
