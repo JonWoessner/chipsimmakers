@@ -83,11 +83,13 @@ def on_received_value(name, value):
                 supplylist[loc][1] -= 1
             # # decrement a supplier total and send to maker
             radio.send_value('I', choose(manufactlist, 1))
-        if name == "manufacturer":
+        if name == "manufact":
             loc = find(manufactlist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
             if loc != -1:
                 manufactlist[loc][1] -= 1
+            #serial.write_line("inventory pre: "+ inventory)
             inventory += 5  #increase inventory for distributors
+            #serial.write_line("inventory post: "+ inventory)
     '''
     if name.includes(convert_to_text(control.device_serial_number())):
         basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))'''
@@ -164,6 +166,6 @@ basic.forever(on_forever)
 def onIn_background():
     while True:
         #basic.show_number(inventory)
-        #serial.write_line("inventory: "+ inventory)
+        serial.write_line("inventory: "+ inventory)
         basic.pause(10)
 control.in_background(onIn_background)
