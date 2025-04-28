@@ -29,6 +29,7 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
 input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
     
     basic.showIcon(IconNames.Heart)
+    radio.sendValue("go", 0)
     // #START THE GAME##
     if (!started) {
         started = true

@@ -24,6 +24,7 @@ input.on_button_pressed(Button.B, on_button_pressed_b)
 def on_button_pressed_ab():
     global started
     basic.show_icon(IconNames.HEART)
+    radio.send_value("go", 0)
     ##START THE GAME##
     if not started:
         started = True
