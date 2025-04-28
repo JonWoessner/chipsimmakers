@@ -157,6 +157,8 @@ function choose(arr: number[][], maxi: number, curr: number): number {
     /** 
     given a list of makers/suppliers, choose one that has the fewest current orders.
     can I also ensure that they rotate nicely??
+    instead, we will simply rotate through them all in turn
+    we could also implement a TSMC mode, where the first manufacturer gets extra orders? 
     
  */
     curr += 1
@@ -169,26 +171,26 @@ function choose(arr: number[][], maxi: number, curr: number): number {
 }
 
 basic.forever(function on_forever() {
-    let val: number;
     let timenow = control.millis()
     
     if (started) {
-        // send out additional demand every 4-9 seconds, random 1-2 each
-        if (timenow - dtime > 5000) {
-            for (let x of consumelist) {
-                val = randint(1, 2)
-                radio.sendValue(x[0] + "I", val)
+        /**    removing the add-demand, consumers will have a goal on paper
+        #send out additional demand every 4-9 seconds, random 1-2 each
+        if timenow - dtime > 5000:
+            for x in consumelist:
+                val = randint(1,2)
+                radio.send_value(x[0]+'I', val)
                 x[1] += val
-            }
-        }
-        
+ */
         // if inventory drops, ping a supplier to make more stuff.
         if (inventory < 10 && timenow - stime > 3000) {
+            stime = timenow
             radio.sendValue(choose(supplylist, count[0], current[0]) + "I", 1)
         }
         
     }
     
+    basic.pause(5)
 })
 control.inBackground(function onIn_background() {
     while (true) {

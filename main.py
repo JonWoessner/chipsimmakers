@@ -119,6 +119,8 @@ def choose(arr: List[List[number]], maxi, curr ):
     '''
     given a list of makers/suppliers, choose one that has the fewest current orders.
     can I also ensure that they rotate nicely??
+    instead, we will simply rotate through them all in turn
+    we could also implement a TSMC mode, where the first manufacturer gets extra orders? 
     '''
     curr += 1
     if curr >= maxi:
@@ -130,16 +132,18 @@ def on_forever():
     timenow = control.millis()
     global stime, dtime, consumelist, started
     if started:
+        '''   removing the add-demand, consumers will have a goal on paper
         #send out additional demand every 4-9 seconds, random 1-2 each
         if timenow - dtime > 5000:
             for x in consumelist:
                 val = randint(1,2)
                 radio.send_value(x[0]+'I', val)
-                x[1] += val
+                x[1] += val'''
         #if inventory drops, ping a supplier to make more stuff.
         if inventory < 10 and ((timenow - stime) > 3000):
+            stime = timenow
             radio.send_value(choose(supplylist, count[0], current[0])+'I', 1)
-
+    basic.pause(5)
 basic.forever(on_forever)
 
 def onIn_background():
