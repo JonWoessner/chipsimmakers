@@ -39,8 +39,6 @@ def on_forever():
             #basic.pause(1000)
         while input.button_is_pressed(Button.A):
             basic.pause(2)
-    if demand > lastdemand:
-        basic.show_number(demand)
-        lastdemand = demand
+    basic.show_number(demand)
     basic.pause(2)
 basic.forever(on_forever)

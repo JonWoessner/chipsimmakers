@@ -38,7 +38,6 @@ let lastdemand = 0
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
 basic.forever(function on_forever() {
-    let lastdemand: number;
     
     if (input.buttonIsPressed(Button.A)) {
         if (demand > 0) {
@@ -58,10 +57,6 @@ basic.forever(function on_forever() {
         }
     }
     
-    if (demand > lastdemand) {
-        basic.showNumber(demand)
-        lastdemand = demand
-    }
-    
+    basic.showNumber(demand)
     basic.pause(2)
 })
