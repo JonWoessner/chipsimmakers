@@ -28,6 +28,7 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
 //  i increase, d decrease, names please is init
 input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
     let started: boolean;
+    basic.showIcon(IconNames.Heart)
     // #START THE GAME##
     if (!started) {
         started = true

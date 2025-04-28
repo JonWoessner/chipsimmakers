@@ -22,6 +22,7 @@ input.on_button_pressed(Button.B, on_button_pressed_b)
 # i increase, d decrease, names please is init
 
 def on_button_pressed_ab():
+    basic.show_icon(IconNames.HEART)
     ##START THE GAME##
     if not started:
         started = True
