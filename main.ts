@@ -42,6 +42,7 @@ control.inBackground(function onIn_background() {
         if (disp == "total") {
             if (bought > lastbought) {
                 basic.showNumber(bought)
+                lastbought = bought
             }
             
         }

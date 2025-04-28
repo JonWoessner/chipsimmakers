@@ -37,5 +37,6 @@ def onIn_background():
         if disp == "total":
             if bought > lastbought:
                 basic.show_number(bought)
+                lastbought = bought
         basic.pause(2)
 control.in_background(onIn_background)
