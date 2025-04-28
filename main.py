@@ -1,4 +1,5 @@
 def on_received_value(name, value):
+    serial.write_line("received: " + name +' and '+value)
     global demand, slow, _type
     if name == "go":
         basic.show_icon(IconNames.YES)
@@ -8,7 +9,9 @@ def on_received_value(name, value):
         radio.send_value("name", numtype)  ### 1 for suppliers, 2 for manufacutres
         basic.show_icon(IconNames.HEART)
     if value == control.device_serial_number():
+        serial.write_line('serial matches!')
         if name == 'I':
+            serial.write_line('increasing demand')
             demand += 1
         if name == "S":
             slow = True
@@ -18,8 +21,8 @@ def on_received_value(name, value):
 radio.on_received_value(on_received_value)
 
 slow = False
-_type = "manufacturer"  ## supplier or manufacturer
-numtype = 2
+_type = "supplier"  ## supplier or manufacturer
+numtype = 1
 slow = False
 demand = 0
 lastdemand = 0

@@ -1,4 +1,5 @@
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
+    serial.writeLine("received: " + name + " and " + value)
     
     if (name == "go") {
         basic.showIcon(IconNames.Yes)
@@ -13,7 +14,9 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     }
     
     if (value == control.deviceSerialNumber()) {
+        serial.writeLine("serial matches!")
         if (name == "I") {
+            serial.writeLine("increasing demand")
             demand += 1
         }
         
@@ -29,9 +32,9 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
 })
 let slow = false
-let _type = "manufacturer"
+let _type = "supplier"
 // # supplier or manufacturer
-let numtype = 2
+let numtype = 1
 slow = false
 let demand = 0
 let lastdemand = 0
