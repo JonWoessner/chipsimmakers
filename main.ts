@@ -45,6 +45,7 @@ input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
 })
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     let loc: number;
+    serial.writeLine(started + "")
     
     //  ##### adding the players to lists
     if (name.includes("name")) {
@@ -72,11 +73,13 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     //  #### End player init
     if (started) {
         //  if consumer demands
+        serial.writeLine(name + " " + value)
         if (name == "consumer") {
             if (inventory > 0) {
                 inventory -= 1
                 // update inventory, then tell that consumer that they were successful 
                 radio.sendValue("I", radio.receivedPacket(RadioPacketProperty.SerialNumber))
+                basic.showIcon(IconNames.No)
                 loc = find(consumelist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
                 // find consumer in list
                 if (loc != -1) {

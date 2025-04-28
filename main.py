@@ -36,6 +36,7 @@ def on_button_pressed_ab():
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
 def on_received_value(name, value):
+    serial.write_line(started+'')
     global inventory, demand, manufactlist, supplylist, consumelist, current, count
     # ##### adding the players to lists
     if name.includes('name'):
@@ -55,10 +56,12 @@ def on_received_value(name, value):
     # #### End player init
     if started:
         # if consumer demands
+        serial.write_line(name + ' '+ value)
         if name == "consumer":
             if inventory > 0:  
                 inventory -= 1  #update inventory, then tell that consumer that they were successful 
                 radio.send_value('I', radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
+                basic.show_icon(IconNames.NO)
                 loc = find(consumelist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) #find consumer in list
                 if loc != -1:  #catch any errors 
                     consumelist[loc][1] += 1
