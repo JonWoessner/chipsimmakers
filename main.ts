@@ -33,9 +33,9 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
 })
 let slow = false
-let _type = "supplier"
+let _type = "manufacturer"
 // # supplier or manufacturer
-let numtype = 1
+let numtype = 2
 slow = false
 let demand = 0
 let lastdemand = 0

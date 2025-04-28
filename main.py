@@ -22,8 +22,8 @@ def on_received_value(name, value):
 radio.on_received_value(on_received_value)
 
 slow = False
-_type = "supplier"  ## supplier or manufacturer
-numtype = 1
+_type = "manufacturer"  ## supplier or manufacturer
+numtype = 2
 slow = False
 demand = 0
 lastdemand = 0
