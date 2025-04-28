@@ -13,6 +13,7 @@ def on_received_value(name, value):
         if name == 'I':
             serial.write_line('increasing demand')
             demand += 1
+            basic.show_number(demand)
         if name == "S":
             slow = True
         if name == "F":

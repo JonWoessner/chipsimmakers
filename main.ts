@@ -18,6 +18,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         if (name == "I") {
             serial.writeLine("increasing demand")
             demand += 1
+            basic.showNumber(demand)
         }
         
         if (name == "S") {
