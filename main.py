@@ -13,7 +13,7 @@ def on_received_value(name, value):
         if name == 'I':
             serial.write_line('increasing demand')
             demand += 1
-            basic.show_number(demand)
+            #basic.show_number(demand)
         if name == "S":
             slow = True
         if name == "F":
@@ -34,14 +34,15 @@ demand = 0
 lastdemand = 0
 radio.set_group(1)
 radio.set_transmit_serial_number(True)
+basic.show_icon(IconNames.STICK_FIGURE)
 
 def on_forever():
-    global demand
+    global demand, lastdemand
     if input.button_is_pressed(Button.A):
         if demand > 0:
             if slow:
                 basic.show_icon(IconNames.GHOST)
-                basic.pause(randint(3000, 8000))
+                basic.pause(randint(3000, 7000))
             demand += -1
             radio.send_value(_type, 1)
             basic.show_icon(IconNames.YES)
@@ -50,4 +51,7 @@ def on_forever():
         while input.button_is_pressed(Button.A):
             basic.pause(2)
     basic.pause(2)
+    if demand != lastdemand:
+        basic.show_number(demand)
+        lastdemand = demand
 basic.forever(on_forever)

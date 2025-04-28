@@ -18,9 +18,9 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         if (name == "I") {
             serial.writeLine("increasing demand")
             demand += 1
-            basic.showNumber(demand)
         }
         
+        // basic.show_number(demand)
         if (name == "S") {
             slow = true
         }
@@ -46,13 +46,14 @@ let demand = 0
 let lastdemand = 0
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
+basic.showIcon(IconNames.StickFigure)
 basic.forever(function on_forever() {
     
     if (input.buttonIsPressed(Button.A)) {
         if (demand > 0) {
             if (slow) {
                 basic.showIcon(IconNames.Ghost)
-                basic.pause(randint(3000, 8000))
+                basic.pause(randint(3000, 7000))
             }
             
             demand += -1
@@ -68,4 +69,9 @@ basic.forever(function on_forever() {
     }
     
     basic.pause(2)
+    if (demand != lastdemand) {
+        basic.showNumber(demand)
+        lastdemand = demand
+    }
+    
 })
