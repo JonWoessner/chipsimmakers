@@ -2,6 +2,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
     if (name == "go") {
         basic.showIcon(IconNames.Yes)
+        basic.showNumber(demand)
     }
     
     if (name == "init") {
@@ -28,9 +29,9 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
 })
 let slow = false
-let _type = "manufacturer"
+let _type = "supplier"
 // # supplier or manufacturer
-let numtype = 2
+let numtype = 1
 slow = false
 let demand = 0
 let lastdemand = 0

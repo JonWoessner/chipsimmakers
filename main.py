@@ -2,6 +2,7 @@ def on_received_value(name, value):
     global demand, slow, _type
     if name == "go":
         basic.show_icon(IconNames.YES)
+        basic.show_number(demand)
     if name == "init":
         basic.pause(randint(100, 3000))
         radio.send_value("name", numtype)  ### 1 for suppliers, 2 for manufacutres
@@ -17,8 +18,8 @@ def on_received_value(name, value):
 radio.on_received_value(on_received_value)
 
 slow = False
-_type = "manufacturer"  ## supplier or manufacturer
-numtype = 2
+_type = "supplier"  ## supplier or manufacturer
+numtype = 1
 slow = False
 demand = 0
 lastdemand = 0
