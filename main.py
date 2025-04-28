@@ -3,6 +3,8 @@ def on_received_value(name, value):
     serial.write_line(name)
     serial.write_line(''+value)
     serial.write_line(""+control.device_serial_number())
+    if name == "go":
+        basic.show_icon(IconNames.YES)
     if name == "init":
         basic.pause(randint(100, 3000))
         radio.send_value("name", 3)
