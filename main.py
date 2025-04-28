@@ -18,8 +18,8 @@ def on_received_value(name, value):
 radio.on_received_value(on_received_value)
 
 slow = False
-_type = "supplier"  ## supplier or manufacturer
-numtype = 1
+_type = "manufacturer"  ## supplier or manufacturer
+numtype = 2
 slow = False
 demand = 0
 lastdemand = 0
@@ -36,9 +36,9 @@ def on_forever():
             demand += -1
             radio.send_value(_type, 1)
             basic.show_icon(IconNames.YES)
+            basic.show_number(demand)
             #basic.pause(1000)
         while input.button_is_pressed(Button.A):
             basic.pause(2)
-    basic.show_number(demand)
     basic.pause(2)
 basic.forever(on_forever)
