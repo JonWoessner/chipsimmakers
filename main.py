@@ -21,6 +21,11 @@ def on_received_value(name, value):
 
 radio.on_received_value(on_received_value)
 
+''' consumers 5
+suppliers  4
+manufact 4
+'''
+
 slow = False
 _type = "supplier"  ## supplier or manufact
 numtype = 1

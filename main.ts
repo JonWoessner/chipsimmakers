@@ -32,6 +32,11 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     }
     
 })
+/**  consumers 5
+suppliers  4
+manufact 4
+
+ */
 let slow = false
 let _type = "supplier"
 // # supplier or manufact
