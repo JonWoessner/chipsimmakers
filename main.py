@@ -22,6 +22,7 @@ input.on_button_pressed(Button.B, on_button_pressed_b)
 # i increase, d decrease, names please is init
 
 def on_button_pressed_ab():
+    global started
     basic.show_icon(IconNames.HEART)
     ##START THE GAME##
     if not started:
@@ -36,7 +37,8 @@ def on_button_pressed_ab():
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
 def on_received_value(name, value):
-    serial.write_line(started+'')
+    serial.write_line("hey there")
+    serial.write_line(''+started+'')
     global inventory, demand, manufactlist, supplylist, consumelist, current, count
     # ##### adding the players to lists
     if name.includes('name'):
@@ -152,6 +154,7 @@ basic.forever(on_forever)
 
 def onIn_background():
     while True:
-        basic.show_number(inventory)
+        #basic.show_number(inventory)
+        serial.write_line("inventory: "+ inventory)
         basic.pause(100)
 control.in_background(onIn_background)

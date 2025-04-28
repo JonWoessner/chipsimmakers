@@ -27,7 +27,7 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
 })
 //  i increase, d decrease, names please is init
 input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
-    let started: boolean;
+    
     basic.showIcon(IconNames.Heart)
     // #START THE GAME##
     if (!started) {
@@ -45,7 +45,8 @@ input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
 })
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     let loc: number;
-    serial.writeLine(started + "")
+    serial.writeLine("hey there")
+    serial.writeLine("" + started + "")
     
     //  ##### adding the players to lists
     if (name.includes("name")) {
@@ -198,7 +199,8 @@ basic.forever(function on_forever() {
 })
 control.inBackground(function onIn_background() {
     while (true) {
-        basic.showNumber(inventory)
+        // basic.show_number(inventory)
+        serial.writeLine("inventory: " + inventory)
         basic.pause(100)
     }
 })
