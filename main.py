@@ -1,6 +1,6 @@
 def on_button_pressed_a():
     radio.send_value("init", 0)
-    basic.show_icon(IconNames.DIAMOND)
+    basic.show_icon(IconNames.HEART)
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_button_pressed_b():
@@ -23,8 +23,8 @@ input.on_button_pressed(Button.B, on_button_pressed_b)
 
 def on_button_pressed_ab():
     global started
-    basic.show_icon(IconNames.HEART)
-    radio.send_value("go", 0)
+    basic.show_icon(IconNames.YES)
+    #serial.write_line(supplylist[0][0]+'')
     ##START THE GAME##
     if not started:
         started = True
@@ -34,6 +34,7 @@ def on_button_pressed_ab():
         for j in supplylist:
             radio.send_value('I', j[0])
         basic.show_number(inventory)
+        radio.send_value("go", 0)
     
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 

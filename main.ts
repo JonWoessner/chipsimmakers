@@ -1,6 +1,6 @@
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
     radio.sendValue("init", 0)
-    basic.showIcon(IconNames.Diamond)
+    basic.showIcon(IconNames.Heart)
 })
 input.onButtonPressed(Button.B, function on_button_pressed_b() {
     let slow: boolean;
@@ -28,8 +28,8 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
 //  i increase, d decrease, names please is init
 input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
     
-    basic.showIcon(IconNames.Heart)
-    radio.sendValue("go", 0)
+    basic.showIcon(IconNames.Yes)
+    // serial.write_line(supplylist[0][0]+'')
     // #START THE GAME##
     if (!started) {
         started = true
@@ -41,6 +41,7 @@ input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
             radio.sendValue("I", j[0])
         }
         basic.showNumber(inventory)
+        radio.sendValue("go", 0)
     }
     
 })
