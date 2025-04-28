@@ -9,7 +9,7 @@ def on_received_value(name, value):
 radio.on_received_value(on_received_value)
 
 disp = ""
-disp = "needed"
+disp = "total"
 demand = 0
 bought = 0
 radio.set_group(1)
@@ -27,16 +27,15 @@ basic.forever(on_forever)
 
 def onIn_background():
     global disp
+    lastbought = 0
     while True:
         # display update section
         if disp == "try":
             basic.show_icon(IconNames.TARGET)
-            disp = "needed"
-        if disp == "success":
-            basic.show_icon(IconNames.YES)
-            disp = "needed"
-        if disp == "needed":
-            basic.show_number(demand)
-        disp = ""
+            basic.show_number(bought)
+            disp = "total"
+        if disp == "total":
+            if bought > lastbought:
+                basic.show_number(bought)
         basic.pause(2)
 control.in_background(onIn_background)

@@ -14,7 +14,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
 })
 let disp = ""
-disp = "needed"
+disp = "total"
 let demand = 0
 let bought = 0
 radio.setGroup(1)
@@ -30,23 +30,22 @@ basic.forever(function on_forever() {
 })
 control.inBackground(function onIn_background() {
     
+    let lastbought = 0
     while (true) {
         //  display update section
         if (disp == "try") {
             basic.showIcon(IconNames.Target)
-            disp = "needed"
+            basic.showNumber(bought)
+            disp = "total"
         }
         
-        if (disp == "success") {
-            basic.showIcon(IconNames.Yes)
-            disp = "needed"
+        if (disp == "total") {
+            if (bought > lastbought) {
+                basic.showNumber(bought)
+            }
+            
         }
         
-        if (disp == "needed") {
-            basic.showNumber(demand)
-        }
-        
-        disp = ""
         basic.pause(2)
     }
 })
