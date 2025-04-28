@@ -4,11 +4,13 @@ def on_button_pressed_a():
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_button_pressed_b():
+    global slow
     if slow == False:
         slow = True
         basic.show_icon(IconNames.SAD)
         for n in manufactlist:
             radio.send_value("S", n[0])
+            serial.write_line(''+ n[0])
         for m in supplylist:
             radio.send_value("S", m[0])
     else:
@@ -47,6 +49,7 @@ def on_received_value(name, value):
         if value == 1:
             # suppliers
             count[0] += 1
+            serial.write_line("added "+ radio.received_packet(RadioPacketProperty.SERIAL_NUMBER) +" to the supplylist")
             supplylist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
             ########radio.send_value("I", supplylist[len(supplylist)-1][0]) 
         if value == 2:
@@ -65,7 +68,7 @@ def on_received_value(name, value):
             if inventory > 0:  
                 inventory -= 1  #update inventory, then tell that consumer that they were successful 
                 radio.send_value('I', radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
-                basic.show_icon(IconNames.NO)
+                #basic.show_icon(IconNames.NO)  #debug
                 loc = find(consumelist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)) #find consumer in list
                 if loc != -1:  #catch any errors 
                     consumelist[loc][1] += 1
@@ -79,7 +82,7 @@ def on_received_value(name, value):
             if loc != -1:
                 supplylist[loc][1] -= 1
             # # decrement a supplier total and send to maker
-            radio.send_value('I', choose(manufactlist, count[1], current[1]))
+            radio.send_value('I', choose(manufactlist, 1))
         if name == "manufacturer":
             loc = find(manufactlist , radio.received_packet(RadioPacketProperty.SERIAL_NUMBER))
             if loc != -1:
@@ -107,7 +110,7 @@ supplylist.pop()
 manufactlist.pop()
 consumelist.pop()
 # ## Starting inventory number
-inventory = 32
+inventory = 12
 dtime = control.millis()
 stime = control.millis()
 _type = "distributor"
@@ -123,18 +126,19 @@ def find(arr: List[List[number]] , serial: int):
             return i
     return -1
 
-def choose(arr: List[List[number]], maxi, curr ):
+def choose(arr: List[List[number]], kind):
     '''
     given a list of makers/suppliers, choose one that has the fewest current orders.
     can I also ensure that they rotate nicely??
     instead, we will simply rotate through them all in turn
     we could also implement a TSMC mode, where the first manufacturer gets extra orders? 
     '''
-    curr += 1
-    if curr >= maxi:
-        curr = 0
-    arr[curr][1] += 1
-    return arr[curr][0]
+    current[kind] += 1
+    if current[kind] >= len(arr):
+        current[kind] = 0
+    arr[current[kind]][1] += 1
+    serial.write_line('attempting to send I to: '+arr[current[kind]][0])
+    return arr[current[kind]][0]
 
 def on_forever():
     timenow = control.millis()
@@ -149,14 +153,17 @@ def on_forever():
                 x[1] += val'''
         #if inventory drops, ping a supplier to make more stuff.
         if inventory < 10 and ((timenow - stime) > 3000):
+            basic.show_icon(IconNames.NO)
             stime = timenow
-            radio.send_value(choose(supplylist, count[0], current[0])+'I', 1)
+            #serial.write_line("before count: "+ supplylist[0][1])
+            radio.send_value('I', choose(supplylist, 0))
+            #serial.write_line("avter count: "+ supplylist[0][1])
     basic.pause(5)
 basic.forever(on_forever)
 
 def onIn_background():
     while True:
         #basic.show_number(inventory)
-        serial.write_line("inventory: "+ inventory)
-        basic.pause(100)
+        #serial.write_line("inventory: "+ inventory)
+        basic.pause(10)
 control.in_background(onIn_background)

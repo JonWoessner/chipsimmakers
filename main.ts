@@ -3,12 +3,13 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
     basic.showIcon(IconNames.Heart)
 })
 input.onButtonPressed(Button.B, function on_button_pressed_b() {
-    let slow: boolean;
+    
     if (slow == false) {
         slow = true
         basic.showIcon(IconNames.Sad)
         for (let n of manufactlist) {
             radio.sendValue("S", n[0])
+            serial.writeLine("" + n[0])
         }
         for (let m of supplylist) {
             radio.sendValue("S", m[0])
@@ -55,6 +56,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         if (value == 1) {
             //  suppliers
             count[0] += 1
+            serial.writeLine("added " + radio.receivedPacket(RadioPacketProperty.SerialNumber) + " to the supplylist")
             supplylist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
         }
         
@@ -82,7 +84,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
                 inventory -= 1
                 // update inventory, then tell that consumer that they were successful 
                 radio.sendValue("I", radio.receivedPacket(RadioPacketProperty.SerialNumber))
-                basic.showIcon(IconNames.No)
+                // basic.show_icon(IconNames.NO)  #debug
                 loc = find(consumelist, radio.receivedPacket(RadioPacketProperty.SerialNumber))
                 // find consumer in list
                 if (loc != -1) {
@@ -105,7 +107,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
             }
             
             //  # decrement a supplier total and send to maker
-            radio.sendValue("I", choose(manufactlist, count[1], current[1]))
+            radio.sendValue("I", choose(manufactlist, 1))
         }
         
         if (name == "manufacturer") {
@@ -143,7 +145,7 @@ _py.py_array_pop(supplylist)
 _py.py_array_pop(manufactlist)
 _py.py_array_pop(consumelist)
 //  ## Starting inventory number
-inventory = 32
+inventory = 12
 let dtime = control.millis()
 let stime = control.millis()
 let _type = "distributor"
@@ -160,7 +162,7 @@ function find(arr: number[][], serial: number): number {
     return -1
 }
 
-function choose(arr: number[][], maxi: number, curr: number): number {
+function choose(arr: number[][], kind: number): number {
     /** 
     given a list of makers/suppliers, choose one that has the fewest current orders.
     can I also ensure that they rotate nicely??
@@ -168,13 +170,14 @@ function choose(arr: number[][], maxi: number, curr: number): number {
     we could also implement a TSMC mode, where the first manufacturer gets extra orders? 
     
  */
-    curr += 1
-    if (curr >= maxi) {
-        curr = 0
+    current[kind] += 1
+    if (current[kind] >= arr.length) {
+        current[kind] = 0
     }
     
-    arr[curr][1] += 1
-    return arr[curr][0]
+    arr[current[kind]][1] += 1
+    serial.writeLine("attempting to send I to: " + arr[current[kind]][0])
+    return arr[current[kind]][0]
 }
 
 basic.forever(function on_forever() {
@@ -191,18 +194,21 @@ basic.forever(function on_forever() {
  */
         // if inventory drops, ping a supplier to make more stuff.
         if (inventory < 10 && timenow - stime > 3000) {
+            basic.showIcon(IconNames.No)
             stime = timenow
-            radio.sendValue(choose(supplylist, count[0], current[0]) + "I", 1)
+            // serial.write_line("before count: "+ supplylist[0][1])
+            radio.sendValue("I", choose(supplylist, 0))
         }
         
     }
     
+    // serial.write_line("avter count: "+ supplylist[0][1])
     basic.pause(5)
 })
 control.inBackground(function onIn_background() {
     while (true) {
         // basic.show_number(inventory)
-        serial.writeLine("inventory: " + inventory)
-        basic.pause(100)
+        // serial.write_line("inventory: "+ inventory)
+        basic.pause(10)
     }
 })
