@@ -1,21 +1,27 @@
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     
-    if (name == "names please") {
-        radio.sendValue("name", 1)
+    if (name == "go") {
+        basic.showIcon(IconNames.Yes)
     }
     
-    if (name.includes(convertToText(control.deviceSerialNumber()))) {
-        if ("this".charAt(-1) == "I") {
-            demand += value
+    if (name == "init") {
+        basic.pause(randint(100, 3000))
+        radio.sendValue("name", numtype)
+        // ## 1 for suppliers, 2 for manufacutres
+        basic.showIcon(IconNames.Heart)
+    }
+    
+    if (value == control.deviceSerialNumber()) {
+        if (name == "I") {
+            demand += 1
         }
         
-        if ("this".charAt(-1) == "S") {
-            if (slow) {
-                slow = false
-            } else {
-                slow = true
-            }
-            
+        if (name == "S") {
+            slow = true
+        }
+        
+        if (name == "F") {
+            slow = false
         }
         
     }
@@ -23,11 +29,14 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
 })
 let slow = false
 let _type = "supplier"
+let numtype = 1
 slow = false
-let demand = 1
+let demand = 0
+let lastdemand = 0
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
 basic.forever(function on_forever() {
+    let lastdemand: number;
     
     if (input.buttonIsPressed(Button.A)) {
         if (demand > 0) {
@@ -41,8 +50,16 @@ basic.forever(function on_forever() {
             basic.showIcon(IconNames.Yes)
         }
         
+        // basic.pause(1000)
+        while (input.buttonIsPressed(Button.A)) {
+            basic.pause(2)
+        }
     }
     
-    // basic.pause(1000)
-    basic.showNumber(demand)
+    if (demand > lastdemand) {
+        basic.showNumber(demand)
+        lastdemand = demand
+    }
+    
+    basic.pause(2)
 })
