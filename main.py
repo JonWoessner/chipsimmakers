@@ -25,6 +25,8 @@ def on_forever():
         disp = "try"
         # send radio request
         radio.send_value('consumer', 1)
+        while input.button_is_pressed(Button.A):
+            basic.pause(2)
     
 basic.forever(on_forever)
 

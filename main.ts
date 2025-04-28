@@ -29,6 +29,9 @@ basic.forever(function on_forever() {
         disp = "try"
         //  send radio request
         radio.sendValue("consumer", 1)
+        while (input.buttonIsPressed(Button.A)) {
+            basic.pause(2)
+        }
     }
     
 })
