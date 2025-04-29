@@ -39,6 +39,9 @@ basic.forever(function on_forever() {
     }
     
 })
+input.onButtonPressed(Button.B, function on_button_pressed_b() {
+    basic.showNumber(bought)
+})
 control.inBackground(function onIn_background() {
     
     let lastbought = 0
