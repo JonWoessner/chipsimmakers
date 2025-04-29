@@ -10,7 +10,7 @@ def on_button_pressed_b():
         basic.show_icon(IconNames.SAD)
         for n in manufactlist:
             radio.send_value("S", n[0])
-            serial.write_line(''+ n[0])
+            #serial.write_line(''+ n[0])
         for m in supplylist:
             radio.send_value("S", m[0])
     else:
@@ -41,15 +41,15 @@ def on_button_pressed_ab():
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
 def on_received_value(name, value):
-    serial.write_line("hey there")
-    serial.write_line(''+started+'')
+    #serial.write_line("hey there")
+    #serial.write_line(''+started+'')
     global inventory, demand, manufactlist, supplylist, consumelist, current, count
     # ##### adding the players to lists
     if name.includes('name'):
         if value == 1:
             # suppliers
             count[0] += 1
-            serial.write_line("added "+ radio.received_packet(RadioPacketProperty.SERIAL_NUMBER) +" to the supplylist")
+            #serial.write_line("added "+ radio.received_packet(RadioPacketProperty.SERIAL_NUMBER) +" to the supplylist")
             supplylist.append([radio.received_packet(RadioPacketProperty.SERIAL_NUMBER), 1])
             ########radio.send_value("I", supplylist[len(supplylist)-1][0]) 
         if value == 2:
@@ -63,7 +63,7 @@ def on_received_value(name, value):
     # #### End player init
     if started:
         # if consumer demands
-        serial.write_line(name + ' '+ value)
+        serial.write_line(name)
         if name == "consumer":
             if inventory > 0:  
                 inventory -= 1  #update inventory, then tell that consumer that they were successful 
@@ -139,7 +139,7 @@ def choose(arr: List[List[number]], kind):
     if current[kind] >= len(arr):
         current[kind] = 0
     arr[current[kind]][1] += 1
-    serial.write_line('attempting to send I to: '+arr[current[kind]][0])
+    #serial.write_line('attempting to send I to: '+arr[current[kind]][0])
     return arr[current[kind]][0]
 
 def on_forever():

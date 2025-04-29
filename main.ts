@@ -9,8 +9,8 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
         basic.showIcon(IconNames.Sad)
         for (let n of manufactlist) {
             radio.sendValue("S", n[0])
-            serial.writeLine("" + n[0])
         }
+        // serial.write_line(''+ n[0])
         for (let m of supplylist) {
             radio.sendValue("S", m[0])
         }
@@ -48,15 +48,15 @@ input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
 })
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     let loc: number;
-    serial.writeLine("hey there")
-    serial.writeLine("" + started + "")
+    // serial.write_line("hey there")
+    // serial.write_line(''+started+'')
     
     //  ##### adding the players to lists
     if (name.includes("name")) {
         if (value == 1) {
             //  suppliers
             count[0] += 1
-            serial.writeLine("added " + radio.receivedPacket(RadioPacketProperty.SerialNumber) + " to the supplylist")
+            // serial.write_line("added "+ radio.received_packet(RadioPacketProperty.SERIAL_NUMBER) +" to the supplylist")
             supplylist.push([radio.receivedPacket(RadioPacketProperty.SerialNumber), 1])
         }
         
@@ -78,7 +78,7 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
     //  #### End player init
     if (started) {
         //  if consumer demands
-        serial.writeLine(name + " " + value)
+        serial.writeLine(name)
         if (name == "consumer") {
             if (inventory > 0) {
                 inventory -= 1
@@ -177,7 +177,7 @@ function choose(arr: number[][], kind: number): number {
     }
     
     arr[current[kind]][1] += 1
-    serial.writeLine("attempting to send I to: " + arr[current[kind]][0])
+    // serial.write_line('attempting to send I to: '+arr[current[kind]][0])
     return arr[current[kind]][0]
 }
 
