@@ -95,7 +95,7 @@ def on_received_value(name, value):
         basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))'''
 radio.on_received_value(on_received_value)
 
-inventory = 0
+
 # ############
 slow = False
 started = False
@@ -112,7 +112,7 @@ supplylist.pop()
 manufactlist.pop()
 consumelist.pop()
 # ## Starting inventory number
-inventory = 12
+inventory = 32
 dtime = control.millis()
 stime = control.millis()
 _type = "distributor"

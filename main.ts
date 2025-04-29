@@ -129,7 +129,6 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         basic.show_string("" + str(radio.received_packet(RadioPacketProperty.SERIAL_NUMBER)))
  */
 })
-let inventory = 0
 //  ############
 let slow = false
 let started = false
@@ -147,7 +146,7 @@ _py.py_array_pop(supplylist)
 _py.py_array_pop(manufactlist)
 _py.py_array_pop(consumelist)
 //  ## Starting inventory number
-inventory = 12
+let inventory = 32
 let dtime = control.millis()
 let stime = control.millis()
 let _type = "distributor"
