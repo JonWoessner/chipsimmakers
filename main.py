@@ -27,8 +27,8 @@ manufact 4
 '''
 
 slow = False
-_type = "manufact"  ## supplier 1 or manufact 2
-numtype = 2
+_type = "supplier"  ## supplier 1 or manufact 2
+numtype = 1
 slow = False
 demand = 0
 lastdemand = 0
