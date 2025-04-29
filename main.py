@@ -20,6 +20,7 @@ demand = 0
 bought = 0
 radio.set_group(1)
 radio.set_transmit_serial_number(True)
+basic.show_icon(IconNames.STICK_FIGURE)
 
 def on_forever():
     global disp

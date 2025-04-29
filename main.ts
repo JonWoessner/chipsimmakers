@@ -27,6 +27,7 @@ let demand = 0
 let bought = 0
 radio.setGroup(1)
 radio.setTransmitSerialNumber(true)
+basic.showIcon(IconNames.StickFigure)
 basic.forever(function on_forever() {
     
     if (input.buttonIsPressed(Button.A)) {
