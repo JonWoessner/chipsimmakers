@@ -154,12 +154,15 @@ def on_forever():
                 radio.send_value(x[0]+'I', val)
                 x[1] += val'''
         #if inventory drops, ping a supplier to make more stuff.
-        if inventory < 10 and ((timenow - stime) > 3000):
+        if inventory < 20 and ((timenow - stime) > 3000):
             basic.show_icon(IconNames.NO)
             stime = timenow
-            #serial.write_line("before count: "+ supplylist[0][1])
             radio.send_value('I', choose(supplylist, 0))
-            #serial.write_line("avter count: "+ supplylist[0][1])
+        if inventory < 8 and ((timenow - stime) > 1500):  #if inventory really low, send more demand faster
+            basic.show_icon(IconNames.NO)
+            stime = timenow
+            radio.send_value('I', choose(supplylist, 0))
+            radio.send_value('I', choose(supplylist, 0))
     basic.pause(5)
 basic.forever(on_forever)
 
@@ -167,5 +170,5 @@ def onIn_background():
     while True:
         #basic.show_number(inventory)
         serial.write_line("inventory: "+ inventory)
-        basic.pause(10)
+        basic.pause(100)
 control.in_background(onIn_background)

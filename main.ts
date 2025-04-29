@@ -195,22 +195,28 @@ basic.forever(function on_forever() {
                 x[1] += val
  */
         // if inventory drops, ping a supplier to make more stuff.
-        if (inventory < 10 && timenow - stime > 3000) {
+        if (inventory < 20 && timenow - stime > 3000) {
             basic.showIcon(IconNames.No)
             stime = timenow
-            // serial.write_line("before count: "+ supplylist[0][1])
+            radio.sendValue("I", choose(supplylist, 0))
+        }
+        
+        if (inventory < 8 && timenow - stime > 1500) {
+            // if inventory really low, send more demand faster
+            basic.showIcon(IconNames.No)
+            stime = timenow
+            radio.sendValue("I", choose(supplylist, 0))
             radio.sendValue("I", choose(supplylist, 0))
         }
         
     }
     
-    // serial.write_line("avter count: "+ supplylist[0][1])
     basic.pause(5)
 })
 control.inBackground(function onIn_background() {
     while (true) {
         // basic.show_number(inventory)
         serial.writeLine("inventory: " + inventory)
-        basic.pause(10)
+        basic.pause(100)
     }
 })
